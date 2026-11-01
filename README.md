@@ -1,36 +1,41 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# product-cards
 
-## Getting Started
+Карточки товаров на Tailwind CSS. Практическая работа №1 — стилизация карточки товара утилитарными классами.
 
-First, run the development server:
+## Запуск
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Открыть http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Что внутри
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `data/products.ts` — типизированный массив из 4 товаров (тарелка глубокая, кружка, ваза, тарелка объемная);
+- `components/ProductCard.tsx` — переиспользуемый компонент карточки (картинка, название, описание, цена, кнопка «в корзину»);
+- `app/page.tsx` — адаптивная сетка `grid-cols-1 sm:grid-cols-2 lg:grid-cols-4` + кнопка «смотреть всю коллекцию»;
+- `public/images/` — картинки товаров.
 
-## Learn More
+Карточки перестраиваются 1 → 2 → 4 колонки при расширении окна. Скриншоты трех состояний лежат в `screenshots/`.
 
-To learn more about Next.js, take a look at the following resources:
+## Какие классы Tailwind оказались самыми полезными
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Самое полезное — это адаптивная сетка: `grid-cols-1` пишется один раз, а `sm:grid-cols-2` и `lg:grid-cols-4` просто добавляют колонки на больших экранах, без единой строчки медиа-запросов. `max-w-7xl mx-auto px-4` мгновенно ограничивает и центрирует контейнер. `rounded-full px-6 py-2` делает кнопки «таблетками» с правильными отступами, а `uppercase` приводит текст к верхнему регистру. `aspect-square` держит подложку изображения квадратной на любой ширине. `transition-colors` вместе с `hover:bg-blue-800` дает плавное затемнение кнопки. В целом весь макет собирается быстро и прямо в JSX, без отдельных CSS-файлов.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Ответы на вопросы
 
-## Deploy on Vercel
+**Почему карточка товара должна быть отдельным компонентом?** Карточка принимает данные через props, поэтому её можно переиспользовать в любом месте — каталог, похожие товары, корзина. Меняется один компонент, а не разметка на каждой странице.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**Какие классы задают адаптивную сетку 1 → 2 → 4?** `grid-cols-1 sm:grid-cols-2 lg:grid-cols-4` — базовый класс без префикса работает на мобильных, `sm:` с 640px, `lg:` с 1024px.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**object-contain vs object-cover?** `contain` вписывает картинку целиком, не обрезая, `cover` заполняет контейнер и обрезает края. Для товара на однотонной подложке лучше `contain` — видно весь предмет без потерь.
+
+**Как задать произвольное скругление?** Синтаксис arbitrary value через квадратные скобки: `rounded-[20px]` задаст ровно 20px, даже если такого размера нет в шкале.
+
+**Зачем key при рендере списка?** React по ключу понимает, какой элемент списка изменился/удалился/добавился. Без него — предупреждение в консоли и возможные баги. Ключ должен быть уникальным и стабильным (`product.id`).
+
+**Как проверить адаптивность без кода?** F12 → режим адаптивного дизайна (Ctrl+Shift+M в Chrome) → выбрать ширину устройства и посмотреть, сколько карточек в ряд.
+
+**Что будет, если убрать @import 'tailwindcss'?** Утилитарные классы не сгенерируются — вся стилизация пропадёт, страница останется без оформления.
